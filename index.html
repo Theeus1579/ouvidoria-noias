@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ouvidoria Oficial - Só Noia de Corote</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #ff4444;
+        }
+        h1 {
+            color: #ff4444;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚨 OUVIDORIA DOS NOIAS 🚨</h1>
+        <p class="subtitle">O servidor caiu? O mod tá ruim? O WbSouza mexeu nos seus baús? Chore aqui embaixo.</p>
+        
+        <form id="reclamacaoForm">
+            <label for="nome">Seu Nick de Chorão:</label>
+            <input type="text" id="nome" required placeholder="Ex: MaHaunter">
+
+            <label for="jogo">Qual servidor estragou seu dia?</label>
+            <input type="text" id="jogo" required placeholder="Ex: Palworld / 7 Days / RPG">
+
+            <label for="choro">Sua Reclamação Dramática:</label>
+            <textarea id="choro" required placeholder="Escreva sua indignação aqui (será ignorada com sucesso)..."></textarea>
+
+            <button type="submit">Enviar Reclamação para o Lixo 🗑️</button>
+        </form>
+        
+        <div class="footer">
+            "Ninguém aqui é obrigado" - Regra 6 📜
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reclamacaoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const jogo = document.getElementById('jogo').value;
+            const choro = document.getElementById('choro').value;
+
+            // URL do Webhook do Discord (Você pode colar o seu webhook aqui depois)
+            const webhookURL = "SEU_WEBHOOK_DO_DISCORD_AQUI";
+
+            const payload = {
+                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 ** Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choro}"`
+            };
+
+            if(webhookURL !== "SEU_WEBHOOK_DO_DISCORD_AQUI") {
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(() => {
+                    alert('Reclamação enviada com sucesso para a lixeira da administração! 😂');
+                    document.getElementById('reclamacaoForm').reset();
+                }).catch(() => {
+                    alert('Erro ao chorar, tente novamente.');
+                });
+            } else {
+                alert(`Valeu, ${nome}! Sua reclamação sobre "${jogo}" foi anotada e sumiu magicamente. 😂`);
+                document.getElementById('reclamacaoForm').reset();
+            }
+        });
+    </script>
+
+</body>
+</html>
