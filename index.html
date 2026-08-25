@@ -41,7 +41,7 @@
             margin-bottom: 8px;
             font-weight: bold;
         }
-        input, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -89,14 +89,16 @@
 
     <div class="container">
         <h1>🚨 OUVIDORIA DOS NOIAS 🚨</h1>
-        <p class="subtitle">O servidor caiu? O mod tá ruim? Escreva sua reclamação abaixo e desabafe com a administração.</p>
+        <p class="subtitle">Escolha o servidor culpado, desabafe e deixe a planilha zoar você.</p>
         
         <form id="reclamacaoForm">
             <label for="nome">Seu Nick de Chorão:</label>
             <input type="text" id="nome" required placeholder="Ex: MaHaunter">
 
             <label for="jogo">Qual servidor estragou seu dia?</label>
-            <input type="text" id="jogo" required placeholder="Ex: Palworld / 7 Days / RPG">
+            <select id="jogo" required>
+                <option value="" disabled selected>Carregando servidores da planilha...</option>
+            </select>
 
             <label for="choroUsuario">Sua Reclamação Dramática:</label>
             <textarea id="choroUsuario" required placeholder="Escreva sua indignação aqui..."></textarea>
@@ -106,37 +108,72 @@
         
         <div class="footer">
             "Ninguém aqui é obrigado" - Regra 6 📜
-            <div class="version">Versão v1.0</div>
+            <div class="version">Versão v1.3</div>
         </div>
     </div>
 
     <script>
+        const urlSheetDB = 'https://sheetdb.io/api/v1/9d77rwu58o76z';
+
+        // Puxa os servidores unicos da planilha para preencher o select
+        async function carregarServidores() {
+            try {
+                const resposta = await fetch(urlSheetDB);
+                const dados = await resposta.json();
+                
+                const selectJogo = document.getElementById('jogo');
+                selectJogo.innerHTML = '<option value="" disabled selected>Selecione o servidor...</option>';
+
+                // Filtra os servidores únicos usando a chave 'servidor' da planilha
+                const servidoresUnicos = [...new Set(dados.map(item => item.servidor))];
+
+                servidoresUnicos.forEach(servidor => {
+                    if (servidor) {
+                        const opt = document.createElement('option');
+                        opt.value = servidor;
+                        opt.textContent = servidor;
+                        selectJogo.appendChild(opt);
+                    }
+                });
+            } catch (erro) {
+                console.log("Erro ao carregar servidores.");
+                document.getElementById('jogo').innerHTML = '<option value="" disabled selected>Erro ao carregar servidores</option>';
+            }
+        }
+
+        carregarServidores();
+
+        // Envio do formulário filtrando exclusivamente os choros do servidor escolhido
         document.getElementById('reclamacaoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const nome = document.getElementById('nome').value;
-            const jogo = document.getElementById('jogo').value;
+            const jogoSelecionado = document.getElementById('jogo').value;
             const digitadoPeloUsuario = document.getElementById('choroUsuario').value;
 
             let choroSorteado = "Reclamou que a planilha falhou e chorou no seco.";
 
             try {
-                const urlSheetDB = 'https://sheetdb.io/api/v1/9d77rwu58o76z';
                 const resposta = await fetch(urlSheetDB);
                 const dados = await resposta.json();
 
-                if (dados && dados.length > 0) {
-                    const itemSorteado = dados[Math.floor(Math.random() * dados.length)];
-                    choroSorteado = itemSorteado.Choro || "Chorou por nada específico.";
+                // Filtra estritamente as linhas onde a coluna 'servidor' bate com o jogo selecionado
+                const chorosDesteServidor = dados.filter(item => item.servidor === jogoSelecionado);
+
+                if (chorosDesteServidor.length > 0) {
+                    const itemSorteado = chorosDesteServidor[Math.floor(Math.random() * chorosDesteServidor.length)];
+                    choroSorteado = itemSorteado.choro || "Chorou por nada específico.";
+                } else {
+                    choroSorteado = "Reclamou de um problema imaginário neste servidor.";
                 }
             } catch (erro) {
-                console.log("Erro ao buscar na planilha, usando choro padrão.");
+                console.log("Erro ao buscar choro filtrado.");
             }
 
             const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
 
             const payload = {
-                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choroSorteado}"`
+                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogoSelecionado}\n😭 **Choro (O usuário digitou: "${digitadoPeloUsuario}"), mas a planilha decretou:** "${choroSorteado}"`
             };
 
             await fetch(webhookURL, {
@@ -145,9 +182,9 @@
                 body: JSON.stringify(payload)
             });
 
-            alert(`Valeu, ${nome}! Sua reclamação foi enviada para a lixeira da administração! 😂`);
-            document.getElementById('reclamacaoForm().reset();' /* Corrigido abaixo no escopo real */);
+            alert(`Valeu, ${nome}! Sua reclamação sobre ${jogoSelecionado} foi enviada para a lixeira! 😂`);
             document.getElementById('reclamacaoForm').reset();
+            carregarServidores();
         });
     </script>
 
