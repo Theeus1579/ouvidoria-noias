@@ -173,7 +173,7 @@
             const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
 
             const payload = {
-                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogoSelecionado}\n😭 **Choro (O usuário digitou: "${digitadoPeloUsuario}"), mas a planilha decretou:** "${choroSorteado}"`
+                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogoSelecionado}\n😭 **Choro:** "${choroSorteado}"`
             };
 
             await fetch(webhookURL, {
