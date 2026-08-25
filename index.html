@@ -41,7 +41,7 @@
             margin-bottom: 8px;
             font-weight: bold;
         }
-        input, textarea {
+        input {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -50,10 +50,6 @@
             color: #fff;
             border-radius: 6px;
             box-sizing: border-box;
-        }
-        textarea {
-            resize: vertical;
-            height: 100px;
         }
         button {
             width: 100%;
@@ -82,7 +78,7 @@
 
     <div class="container">
         <h1>🚨 OUVIDORIA DOS NOIAS 🚨</h1>
-        <p class="subtitle">O servidor caiu? O mod tá ruim? O WbSouza mexeu nos seus baús? Chore aqui embaixo.</p>
+        <p class="subtitle">Digite seus dados e deixe o sistema inventar o seu choro automaticamente. 😂</p>
         
         <form id="reclamacaoForm">
             <label for="nome">Seu Nick de Chorão:</label>
@@ -90,9 +86,6 @@
 
             <label for="jogo">Qual servidor estragou seu dia?</label>
             <input type="text" id="jogo" required placeholder="Ex: Palworld / 7 Days / RPG">
-
-            <label for="choro">Sua Reclamação Dramática:</label>
-            <textarea id="choro" required placeholder="Escreva sua indignação aqui (será ignorada com sucesso)..."></textarea>
 
             <button type="submit">Enviar Reclamação para o Lixo 🗑️</button>
         </form>
@@ -109,34 +102,38 @@
             const nome = document.getElementById('nome').value;
             const jogo = document.getElementById('jogo').value;
 
+            let choroSorteado = "Reclamou que a planilha falhou e chorou no seco.";
+
             try {
-                // Substitua pelo link da API que o SheetDB te der
-                const urlPlanilha = 'https://sheetdb.io/api/v1/9d77rwu58o76z';
+                // Link da API gerada pelo SheetDB
+                const urlSheetDB = 'https://sheetdb.io/api/v1/9d77rwu58o76z';
                 
-                const resposta = await fetch(urlPlanilha);
+                const resposta = await fetch(urlSheetDB);
                 const dados = await resposta.json();
 
-                // Pega aleatoriamente um dos choros salvos na planilha
-                const choroSorteado = dados[Math.floor(Math.random() * dados.length)].choro;
-
-                const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
-
-                const payload = {
-                    content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choroSorteado}"`
-                };
-
-                await fetch(webhookURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                alert(`Valeu, ${nome}! Sua reclamação gerada pela planilha foi enviada para a lixeira! 😂`);
-                document.getElementById('reclamacaoForm').reset();
-
+                if (dados && dados.length > 0) {
+                    // Sorteia um item aleatório do array e pega a propriedade 'Choro'
+                    const itemSorteado = dados[Math.floor(Math.random() * dados.length)];
+                    choroSorteado = itemSorteado.Choro || "Chorou por nada específico.";
+                }
             } catch (erro) {
-                alert('Erro ao consultar a central de choros, tente novamente.');
+                console.log("Erro ao buscar na planilha, usando choro padrão.");
             }
+
+            const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
+
+            const payload = {
+                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choroSorteado}"`
+            };
+
+            await fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            alert(`Valeu, ${nome}! Sua reclamação puxada da planilha foi enviada para a lixeira! 😂`);
+            document.getElementById('reclamacaoForm').reset();
         });
     </script>
 
