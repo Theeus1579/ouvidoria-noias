@@ -110,14 +110,13 @@
             const jogo = document.getElementById('jogo').value;
             const choro = document.getElementById('choro').value;
 
-            // URL do Webhook do Discord (Você pode colar o seu webhook aqui depois)
-            const webhookURL = "SEU_WEBHOOK_DO_DISCORD_AQUI";
+            const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
 
             const payload = {
-                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 ** Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choro}"`
+                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choro}"`
             };
 
-            if(webhookURL !== "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM") {
+            if(webhookURL && webhookURL !== "SEU_WEBHOOK_DO_DISCORD_AQUI") {
                 fetch(webhookURL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
