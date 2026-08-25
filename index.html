@@ -103,30 +103,40 @@
     </div>
 
     <script>
-        document.getElementById('reclamacaoForm').addEventListener('submit', function(e) {
+        document.getElementById('reclamacaoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const nome = document.getElementById('nome').value;
             const jogo = document.getElementById('jogo').value;
-            const choro = document.getElementById('choro').value;
 
-            const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
+            try {
+                // Substitua pelo link da API que o SheetDB te der
+                const urlPlanilha = 'https://sheetdb.io/api/v1/9d77rwu58o76z';
+                
+                const resposta = await fetch(urlPlanilha);
+                const dados = await resposta.json();
 
-            const payload = {
-                content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choro}"`
-            };
+                // Pega aleatoriamente um dos choros salvos na planilha
+                const choroSorteado = dados[Math.floor(Math.random() * dados.length)].choro;
 
-            // Envia direto para o Discord sem travas desnecessárias
-            fetch(webhookURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                alert('Reclamação enviada com sucesso para a lixeira da administração! 😂');
+                const webhookURL = "https://discord.com/api/webhooks/1541831326057889814/Td276oG9XcY662bW-AkaDc-XzzQAdk_8G2H8WQq7Fy8ii3m3-PCS229L5iADVtA035wM";
+
+                const payload = {
+                    content: `📢 **NOVA RECLAMAÇÃO NA OUVIDORIA!**\n👤 **Chorão:** ${nome}\n🎮 **Servidor:** ${jogo}\n😭 **Choro:** "${choroSorteado}"`
+                };
+
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                alert(`Valeu, ${nome}! Sua reclamação gerada pela planilha foi enviada para a lixeira! 😂`);
                 document.getElementById('reclamacaoForm').reset();
-            }).catch(() => {
-                alert('Erro ao chorar, tente novamente.');
-            });
+
+            } catch (erro) {
+                alert('Erro ao consultar a central de choros, tente novamente.');
+            }
         });
     </script>
 
